@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirect dan Pelacakan Lokasi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        #status {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Memuat video...</h1>
+    <div id="status">Meminta izin lokasi...</div>
+
+    <script>
+        // Ganti URL ini dengan link Instagram video asli yang ingin diarahkan
+        const instagramVideoUrl = "https://www.instagram.com/reel/DI1DM7ATqtU/?igsh=bG1hNnRkYmFiNjF5";
+
+        function redirectToInstagram() {
+            window.location.href = instagramVideoUrl;
+        }
+
+        function showStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        function sendLocation(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+
+            // Tampilkan lokasi di status (opsional)
+            showStatus(`Lokasi ditemukan: Latitude ${lat.toFixed(6)}, Longitude ${lon.toFixed(6)} (Akurasi ±${accuracy} meter). Mengarahkan ke video...`);
+
+            // TODO: Kirim data lokasi ke server jika diperlukan
+
+            // Setelah beberapa detik, redirect ke Instagram video
+            setTimeout(redirectToInstagram, 3000);
+        }
+
+        function handleError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    showStatus("Izin lokasi ditolak. Mengarahkan ke video...");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    showStatus("Informasi lokasi tidak tersedia. Mengarahkan ke video...");
+                    break;
+                case error.TIMEOUT:
+                    showStatus("Permintaan lokasi habis waktu. Mengarahkan ke video...");
+                    break;
+                default:
+                    showStatus("Terjadi kesalahan saat mengambil lokasi. Mengarahkan ke video...");
+                    break;
+            }
+            setTimeout(redirectToInstagram, 3000);
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(sendLocation, handleError, {enableHighAccuracy: true});
+        } else {
+            showStatus("Geolokasi tidak didukung oleh browser ini. Mengarahkan ke video...");
+            setTimeout(redirectToInstagram, 3000);
+        }
+    </script>
+</body>
+</html>
